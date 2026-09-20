@@ -14,9 +14,18 @@ PostgreSQL. Built with FastAPI, Celery, Redis, and PostgreSQL.
    ```bash
    docker compose up --build
    ```
-3. The API will be available at `http://localhost:8000`. Requests to
-   protected endpoints require an `X-API-KEY` header (default value:
-   `changeme`, set via the `API_KEY` environment variable).
+3. Open `http://localhost:8000/` for the web UI, or `http://localhost:8000/docs`
+   for the interactive Swagger API docs. All `/api/v1/*` endpoints require an
+   `X-API-KEY` header (default value: `changeme`, set via the `API_KEY`
+   environment variable).
+
+### Running Tests
+
+With the `db` and `redis` containers already running (via `docker compose up`),
+run in a separate terminal:
+```bash
+docker compose exec api pytest test_main.py -v
+```
 
 ## 2. Project Structure
 
@@ -36,8 +45,9 @@ PostgreSQL. Built with FastAPI, Celery, Redis, and PostgreSQL.
 
 The system follows a simple async processing pipeline:
 
-1. **FastAPI** receives an uploaded file at `POST /upload`, saves it to disk,
-   and creates a `Document` row in **PostgreSQL** with status `PENDING`.
+1. **FastAPI** receives an uploaded file at `POST /api/v1/upload`, saves it to
+   a shared volume, and creates a `Document` row in **PostgreSQL** with status
+   `PENDING`.
 2. The request enqueues a job on **Redis** (used as the Celery message
    broker) and returns immediately with the document ID.
 3. **Celery** worker picks up the job, marks the document `PROCESSING`,
@@ -50,8 +60,8 @@ The system follows a simple async processing pipeline:
 5. If the document is linked to a question paper as an `ANSWER_KEY`, the
    worker also matches answers back to the original questions by
    `question_number`.
-6. The client polls `GET /documents/{id}/status` and then reads the results
-   via the questions/review/answers endpoints.
+6. The client polls `GET /api/v1/documents/{id}/status` and then reads the
+   results via the questions/review/answers endpoints.
 
 ```
 Client → FastAPI (/upload) → PostgreSQL (Document row)
@@ -89,3 +99,18 @@ structured JSON in a single call, which made it the fastest path to a
 working prototype. The trade-off is a dependency on an external API
 (latency, cost, and rate limits) and less fine-grained control over
 extraction accuracy compared to a purpose-built OCR pipeline.
+
+**Async processing via Celery** decouples the slow, external AI call from the
+HTTP request/response cycle entirely — uploads return immediately instead of
+blocking for however long extraction takes. The worker also retries on
+transient Gemini server errors and rate limits (a couple of short backoff
+attempts) before giving up, so a temporary API hiccup doesn't fail an
+otherwise-good document.
+
+**Confidence is grounded in legibility, not plausibility.** The extraction
+prompt explicitly instructs the model to score `confidence_score` based on
+how certain it is of what it actually read, not how coherent the guessed
+text sounds — and to mark illegible regions as such rather than inventing
+plausible-sounding content. This was a deliberate fix after testing showed
+the model could otherwise hallucinate fluent, high-confidence answers for
+genuinely unreadable scans.

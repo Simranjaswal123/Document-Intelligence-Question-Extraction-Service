@@ -17,14 +17,29 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 EXTRACTION_PROMPT = """
-Extract all questions from this document. Return ONLY a JSON array where each
-item has these fields:
+Identify every distinct question block in this document, using visual
+structure (numbering, indentation, spacing) even where the text itself is
+blurry or hard to read. Still report a block for every question you can
+locate, so a human reviewer has something to check — do not silently
+drop questions just because they're hard to read.
+
+For question_text: transcribe only what you can actually visually make out.
+Never invent, guess, or fill in plausible-sounding content for text that is
+blurry, obscured, or illegible. If a block's text is illegible, write
+"[illegible text]" (or transcribe the few legible words/characters you can
+make out) instead of a fabricated, coherent-sounding question.
+
+Return ONLY a JSON array where each item has these fields:
 - question_number (string)
 - question_text (string)
 - options (array of strings, empty array if none)
 - answer (string, or null if not present)
 - page_numbers (array of integers)
-- confidence_score (float between 0.0 and 1.0)
+- confidence_score (float between 0.0 and 1.0) — this must reflect how
+  legible and certain your reading of THIS SPECIFIC TEXT was, not how
+  plausible the content sounds. If the source text is blurry, low-resolution,
+  or partially obscured, confidence_score must be 0.1 or lower, even if you
+  can make out what seems like a plausible question.
 
 Return valid JSON only, with no extra text or markdown formatting.
 """
