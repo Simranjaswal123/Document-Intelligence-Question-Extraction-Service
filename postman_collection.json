@@ -1,0 +1,105 @@
+{
+  "info": {
+    "name": "Document Processing & Question Extraction API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "api_key", "value": "changeme" },
+    { "key": "document_id", "value": "REPLACE_WITH_DOCUMENT_ID" },
+    { "key": "question_doc_id", "value": "REPLACE_WITH_QUESTION_DOC_ID" },
+    { "key": "answer_doc_id", "value": "REPLACE_WITH_ANSWER_DOC_ID" }
+  ],
+  "item": [
+    {
+      "name": "Upload Document",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "X-API-KEY", "value": "{{api_key}}" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": ""
+            },
+            {
+              "key": "doc_type",
+              "type": "text",
+              "value": "QUESTION_PAPER"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "upload"]
+        }
+      }
+    },
+    {
+      "name": "Get Document Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "X-API-KEY", "value": "{{api_key}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/documents/{{document_id}}/status",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "documents", "{{document_id}}", "status"]
+        }
+      }
+    },
+    {
+      "name": "Get Document Questions",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "X-API-KEY", "value": "{{api_key}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/documents/{{document_id}}/questions",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "documents", "{{document_id}}", "questions"]
+        }
+      }
+    },
+    {
+      "name": "Get Review Items",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "X-API-KEY", "value": "{{api_key}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/documents/{{document_id}}/review-items",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "documents", "{{document_id}}", "review-items"]
+        }
+      }
+    },
+    {
+      "name": "Link Question and Answer Documents",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "X-API-KEY", "value": "{{api_key}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question_doc_id\": \"{{question_doc_id}}\",\n  \"answer_doc_id\": \"{{answer_doc_id}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/documents/link",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "documents", "link"]
+        }
+      }
+    }
+  ]
+}

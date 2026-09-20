@@ -1,0 +1,57 @@
+{
+  "document": {
+    "document_id": "3f2a1c4e-9b7d-4e2a-8c1f-6d9e2b7a5f10",
+    "filename": "midterm_question_paper.pdf",
+    "status": "COMPLETED"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "document_id": "3f2a1c4e-9b7d-4e2a-8c1f-6d9e2b7a5f10",
+      "question_number": "1",
+      "question_text": "What is the time complexity of binary search on a sorted array of n elements?",
+      "options": ["O(n)", "O(log n)", "O(n log n)", "O(1)"],
+      "answer": "O(log n)",
+      "source_pages": [1],
+      "confidence_score": 0.97,
+      "review_required": false,
+      "warning_message": null
+    },
+    {
+      "id": 2,
+      "document_id": "3f2a1c4e-9b7d-4e2a-8c1f-6d9e2b7a5f10",
+      "question_number": "2",
+      "question_text": "Define normalization in the context of relational databases.",
+      "options": [],
+      "answer": null,
+      "source_pages": [1],
+      "confidence_score": 0.91,
+      "review_required": false,
+      "warning_message": null
+    },
+    {
+      "id": 3,
+      "document_id": "3f2a1c4e-9b7d-4e2a-8c1f-6d9e2b7a5f10",
+      "question_number": "3",
+      "question_text": "Explain the difference between TCP and UDP with respect to reliability and use cases.",
+      "options": [],
+      "answer": null,
+      "source_pages": [2],
+      "confidence_score": 0.58,
+      "review_required": true,
+      "warning_message": "Low confidence extraction - question text may be incomplete due to scan quality. Please verify manually."
+    },
+    {
+      "id": 4,
+      "document_id": "3f2a1c4e-9b7d-4e2a-8c1f-6d9e2b7a5f10",
+      "question_number": "4",
+      "question_text": "Which data structure uses FIFO (First In First Out) order?",
+      "options": ["Stack", "Queue", "Tree", "Graph"],
+      "answer": "Queue",
+      "source_pages": [2],
+      "confidence_score": 0.89,
+      "review_required": false,
+      "warning_message": null
+    }
+  ]
+}
